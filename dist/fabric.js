@@ -5,7 +5,7 @@ var fabric = fabric || { version: '5.3.0' };
 if (typeof exports !== 'undefined') {
   exports.fabric = fabric;
 } else if (typeof define === 'function' && define.amd) {
-/* _AMD_START_ */
+  /* _AMD_START_ */
   define([], function () {
     return fabric;
   });
@@ -12012,6 +12012,13 @@ fabric.ElementsParser = function (
       clipPath: undefined,
 
       /**
+       * If true, pinching objects with 2 fingers won't resize them
+       * @type Boolean
+       * @default
+       */
+      disablePinchZoomOnObjects: false,
+
+      /**
        * @private
        * @param {HTMLElement | String} el &lt;canvas> element to initialize instance on
        * @param {Object} [options] Options object
@@ -17953,11 +17960,13 @@ fabric.util.object.extend(
         t.action = 'scale';
         t.originX = t.originY = 'center';
 
-        this._scaleObjectBy(self.scale, e);
+        if (!this.disablePinchZoomOnObjects) {
+          this._scaleObjectBy(self.scale, e);
 
-        if (self.rotation !== 0) {
-          t.action = 'rotate';
-          this._rotateObjectByAngle(self.rotation, e);
+          if (self.rotation !== 0) {
+            t.action = 'rotate';
+            this._rotateObjectByAngle(self.rotation, e);
+          }
         }
 
         this.requestRenderAll();
@@ -18014,6 +18023,7 @@ fabric.util.object.extend(
         this.fire('touch:longpress', {
           e: e,
           self: self,
+          target: this.findTarget(e),
         });
       },
 
