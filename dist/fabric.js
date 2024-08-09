@@ -12652,7 +12652,10 @@ fabric.ElementsParser = function (
        * @chainable
        */
       clearContext: function (ctx) {
-        ctx.clearRect(0, 0, this.width, this.height);
+        if (ctx) {
+          ctx.clearRect(0, 0, this.width, this.height);
+        }
+
         return this;
       },
 
@@ -17240,6 +17243,10 @@ fabric.PatternBrush = fabric.util.createClass(
           actionHandler = transform.actionHandler;
         // this object could be created from the function in the control handlers
 
+        if (action === 'drag' && this.preventDragging) {
+          return;
+        }
+
         if (actionHandler) {
           actionPerformed = actionHandler(e, transform, x, y);
         }
@@ -17921,6 +17928,8 @@ fabric.util.object.extend(
        * @param {Event} self Event proxy object by Event.js
        */
       __onTransformGesture: function (e, self) {
+        this.preventDragging = e.touches.length === 2;
+
         if (
           this.isDrawingMode ||
           !e.touches ||
