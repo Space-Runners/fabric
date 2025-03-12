@@ -5977,7 +5977,7 @@ fabric.CommonMethods = {
     }
   }
 
-  function setImageSmoothing(ctx, value) {
+  function setImageSmoothing(ctx, value, imageSmoothingQuality) {
     ctx.imageSmoothingEnabled =
       ctx.imageSmoothingEnabled ||
       ctx.webkitImageSmoothingEnabled ||
@@ -5985,6 +5985,11 @@ fabric.CommonMethods = {
       ctx.msImageSmoothingEnabled ||
       ctx.oImageSmoothingEnabled;
     ctx.imageSmoothingEnabled = value;
+
+    if(imageSmoothingQuality) {
+      ctx.imageSmoothingQuality = imageSmoothingQuality;
+    }
+  
   }
 
   /**
@@ -11946,6 +11951,14 @@ fabric.ElementsParser = function (
       imageSmoothingEnabled: true,
 
       /**
+       * Level of imageSmoothingQuality. Can be "low", "medium", "high". If "high" when the canvas is zoomed in there will be minimal pixelation on images
+       * @since 4.0.0-beta.11
+       * @type String
+       * @default
+       */
+      imageSmoothingQuality: null,
+
+      /**
        * The transformation (a Canvas 2D API transform matrix) which focuses the viewport
        * @type Array
        * @example <caption>Default transform</caption>
@@ -12771,7 +12784,7 @@ fabric.ElementsParser = function (
         this.cancelRequestedRender();
         this.calcViewportBoundaries();
         this.clearContext(ctx);
-        fabric.util.setImageSmoothing(ctx, this.imageSmoothingEnabled);
+        fabric.util.setImageSmoothing(ctx, this.imageSmoothingEnabled, this.imageSmoothingQuality);
         this.fire('before:render', { ctx: ctx });
         this._renderBackground(ctx);
 
@@ -25190,6 +25203,7 @@ fabric.util.object.extend(
        */
       imageSmoothing: true,
 
+    
       /**
        * Constructor
        * Image can be initialized with any canvas drawable or a string.
@@ -25616,7 +25630,7 @@ fabric.util.object.extend(
        * @param {CanvasRenderingContext2D} ctx Context to render on
        */
       _render: function (ctx) {
-        fabric.util.setImageSmoothing(ctx, this.imageSmoothing);
+        fabric.util.setImageSmoothing(ctx, this.imageSmoothing, this.canvas.imageSmoothingQuality);
         if (
           this.isMoving !== true &&
           this.resizeFilter &&
@@ -25634,7 +25648,7 @@ fabric.util.object.extend(
        * @param {CanvasRenderingContext2D} ctx Context to render on
        */
       drawCacheOnCanvas: function (ctx) {
-        fabric.util.setImageSmoothing(ctx, this.imageSmoothing);
+        fabric.util.setImageSmoothing(ctx, this.imageSmoothing, this.canvas.imageSmoothingQuality);
         fabric.Object.prototype.drawCacheOnCanvas.call(this, ctx);
       },
 
