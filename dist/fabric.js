@@ -12779,6 +12779,12 @@ fabric.ElementsParser = function (
        * @chainable
        */
       renderCanvas: function (ctx, objects) {
+        if(!ctx) {
+          console.warn('[fabric-spacerunners] Canvas context has not been initialized yet while rendering canvas. This happens when in a rare amount of cases the browser resize observer kicks in while the canvas DOM is not ready. It should not have any visible consequences to the end user and the background image should still show. If you see any visible issues, report the issue in the repository.');
+          
+          return
+        }
+    
         var v = this.viewportTransform,
           path = this.clipPath;
         this.cancelRequestedRender();
